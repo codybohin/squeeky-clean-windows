@@ -1,0 +1,7 @@
+{
+  "name": "squeeky-clean-windows",
+  "version": "1.0.0",
+  "description": "Squeeky Clean Windows — window and gutter cleaning website with instant quote calculator",
+  "private": true,
+  "type": "module"
+}

@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<!--
+  BEFORE YOU LAUNCH — replace these placeholders:
+  1. Phone number: search for "555-0100" (appears 4 times) and replace with your real number
+     - format used: tel:+18015550100 for links, (801) 555-0100 for display text
+  2. Email: search for "hello@squeekycleanwindows.com" and replace with your real inbox
+  3. reviews.js: add your real Google reviews once you have them (see comments in that file)
+  4. api/lead.js: set RESEND_API_KEY and LEAD_TO_EMAIL in Vercel env vars to receive leads by email
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Squeeky Clean Windows — Professional Window & Gutter Cleaning</title>
+<meta name="description" content="Professional residential and commercial window and gutter cleaning across Northern Utah. Get an instant quote in under a minute. Reliable, insured, and detail-obsessed.">
+<meta property="og:title" content="Squeeky Clean Windows — Window & Gutter Cleaning">
+<meta property="og:description" content="Streak-free windows and clear gutters, done right. Get an instant online quote.">
+<meta name="theme-color" content="#0B5563">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    /* Palette — water, glass, daylight. Deep teal + sky + a warm sun accent. */
+    --ink: #0E2B30;
+    --teal: #0B5563;
+    --teal-deep: #073B46;
+    --sky: #BFE3E8;
+    --sky-pale: #EAF5F6;
+    --paper: #FBFDFD;
+    --sun: #F4A93B;
+    --sun-deep: #E2952A;
+    --mist: #5E7E84;
+    --line: #D6E6E8;
+    --white: #FFFFFF;
+    --shadow: 0 1px 2px rgba(14,43,48,0.04), 0 8px 24px rgba(14,43,48,0.06);
+    --shadow-lg: 0 4px 12px rgba(14,43,48,0.08), 0 24px 60px rgba(14,43,48,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+
+  /* ---------- Nav ---------- */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 40px;
+    background: rgba(251,253,253,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; align-items: center; gap: 11px; font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.28rem; letter-spacing: -0.01em; color: var(--ink); text-decoration: none; }
+  .brand-mark { width: 34px; height: 34px; flex-shrink: 0; }
+  .nav-links { display: flex; align-items: center; gap: 32px; }
+  .nav-links a { color: var(--ink); text-decoration: none; font-size: 0.96rem; font-weight: 400; opacity: 0.8; transition: opacity 0.2s; }
+  .nav-links a:hover { opacity: 1; }
+  .nav-phone { font-weight: 600 !important; opacity: 1 !important; color: var(--teal) !important; }
+  .nav-cta { background: var(--teal); color: var(--white); padding: 11px 22px; border-radius: 999px; font-weight: 500; font-size: 0.95rem; text-decoration: none; transition: background 0.2s, transform 0.15s; }
+  .nav-cta:hover { background: var(--teal-deep); transform: translateY(-1px); }
+  .nav-toggle { display: none; background: none; border: none; cursor: pointer; }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; padding: 96px 40px 110px; max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 60px; align-items: center; }
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal); margin-bottom: 22px; }
+  .hero-eyebrow::before { content: ''; width: 28px; height: 1.5px; background: var(--sun); }
+  .hero h1 { font-family: 'Fraunces', serif; font-weight: 600; font-size: clamp(2.6rem, 5vw, 4.1rem); line-height: 1.04; letter-spacing: -0.02em; margin-bottom: 22px; }
+  .hero h1 .light { color: var(--teal); font-style: italic; font-weight: 500; }
+  .hero p.lede { font-size: 1.16rem; color: var(--mist); max-width: 30rem; margin-bottom: 34px; }
+  .hero-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .btn-primary { background: var(--sun); color: var(--ink); padding: 15px 30px; border-radius: 999px; font-weight: 600; font-size: 1.02rem; text-decoration: none; border: none; cursor: pointer; transition: background 0.2s, transform 0.15s; box-shadow: 0 6px 18px rgba(244,169,59,0.32); }
+  .btn-primary:hover { background: var(--sun-deep); transform: translateY(-2px); }
+  .btn-ghost { color: var(--ink); padding: 15px 8px; font-weight: 500; font-size: 1.02rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-ghost:hover { color: var(--teal); }
+  .hero-trust { margin-top: 40px; display: flex; gap: 28px; flex-wrap: wrap; }
+  .trust-chip { display: flex; align-items: center; gap: 9px; font-size: 0.92rem; color: var(--ink); font-weight: 500; }
+  .trust-chip svg { color: var(--teal); flex-shrink: 0; }
+
+  /* Hero visual — a window pane being squeegeed */
+  .hero-visual { position: relative; aspect-ratio: 4/5; border-radius: 18px; overflow: hidden; box-shadow: var(--shadow-lg); background: linear-gradient(160deg, #9ecfd6, #d6ecef 55%, #eaf5f6); }
+  .pane { position: absolute; inset: 0; }
+  .pane-grid { position: absolute; inset: 0; }
+  .pane-grid span { position: absolute; background: rgba(255,255,255,0.55); }
+  .pane-mullion-v { width: 6px; height: 100%; left: 50%; transform: translateX(-50%); }
+  .pane-mullion-h { height: 6px; width: 100%; top: 50%; transform: translateY(-50%); }
+  .frame { position: absolute; inset: 0; border: 14px solid #fff; border-radius: 18px; box-shadow: inset 0 0 0 1px var(--line); }
+  /* the squeegee swipe */
+  .swipe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(115deg, transparent 0%, transparent 38%, rgba(255,255,255,0.85) 42%, rgba(255,255,255,0.95) 50%, transparent 56%); transform: translateX(-30%); animation: swipe 5.5s ease-in-out infinite; }
+  @keyframes swipe { 0%, 12% { transform: translateX(-60%); } 50% { transform: translateX(60%); } 88%, 100% { transform: translateX(60%); } }
+  .droplets { position: absolute; inset: 0; }
+  .droplets i { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.7); }
+  .hero-badge { position: absolute; bottom: 22px; left: 22px; right: 22px; background: rgba(255,255,255,0.94); backdrop-filter: blur(8px); border-radius: 12px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow); }
+  .hero-badge .stars { color: var(--sun); font-size: 1.05rem; letter-spacing: 1px; }
+  .hero-badge .label { font-size: 0.86rem; color: var(--mist); }
+  .hero-badge .num { font-weight: 700; color: var(--ink); }
+
+  /* ---------- Section scaffold ---------- */
+  section { scroll-margin-top: 80px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 40px; }
+  .section-head { text-align: center; max-width: 40rem; margin: 0 auto 56px; }
+  .section-eyebrow { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 14px; }
+  .section-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: clamp(2rem, 3.6vw, 2.9rem); line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 16px; }
+  .section-sub { color: var(--mist); font-size: 1.08rem; }
+
+  /* ---------- Services ---------- */
+  .services { padding: 96px 0; background: var(--sky-pale); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .svc-card { background: var(--white); border: 1px solid var(--line); border-radius: 16px; padding: 34px 30px; transition: transform 0.2s, box-shadow 0.2s; }
+  .svc-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  .svc-icon { width: 52px; height: 52px; border-radius: 13px; background: var(--sky-pale); display: flex; align-items: center; justify-content: center; color: var(--teal); margin-bottom: 22px; }
+  .svc-card h3 { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.42rem; margin-bottom: 12px; }
+  .svc-card p { color: var(--mist); font-size: 0.98rem; margin-bottom: 18px; }
+  .svc-list { list-style: none; }
+  .svc-list li { font-size: 0.94rem; padding: 6px 0 6px 26px; position: relative; color: var(--ink); }
+  .svc-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 14px; height: 8px; border-left: 2px solid var(--sun); border-bottom: 2px solid var(--sun); transform: rotate(-45deg); }
+
+  /* ---------- Quote tool ---------- */
+  .quote { padding: 96px 0; }
+  .quote-shell { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-lg); background: var(--white); }
+  .quote-form { padding: 48px 44px; }
+  .quote-form h3 { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.7rem; margin-bottom: 6px; }
+  .quote-form .hint { color: var(--mist); font-size: 0.96rem; margin-bottom: 30px; }
+  .field { margin-bottom: 24px; }
+  .field > label { display: block; font-weight: 600; font-size: 0.92rem; margin-bottom: 4px; }
+  .field .sublabel { font-size: 0.82rem; color: var(--mist); margin-bottom: 11px; }
+  .seg { display: flex; gap: 8px; flex-wrap: wrap; }
+  .seg button { flex: 1; min-width: max-content; padding: 11px 16px; border: 1.5px solid var(--line); background: var(--white); border-radius: 10px; font-family: inherit; font-size: 0.94rem; font-weight: 500; color: var(--ink); cursor: pointer; transition: all 0.15s; }
+  .seg button:hover { border-color: var(--teal); }
+  .seg button.on { border-color: var(--teal); background: var(--teal); color: #fff; }
+
+  .stepper { display: flex; align-items: center; gap: 0; border: 1.5px solid var(--line); border-radius: 10px; overflow: hidden; width: max-content; }
+  .stepper button { width: 46px; height: 46px; border: none; background: var(--sky-pale); font-size: 1.3rem; color: var(--teal); cursor: pointer; transition: background 0.15s; }
+  .stepper button:hover { background: var(--sky); }
+  .stepper input { width: 72px; height: 46px; border: none; text-align: center; font-family: inherit; font-size: 1.1rem; font-weight: 600; color: var(--ink); -moz-appearance: textfield; }
+  .stepper input::-webkit-outer-spin-button, .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  .check-row { display: flex; align-items: flex-start; gap: 11px; padding: 13px 0; border-top: 1px solid var(--line); cursor: pointer; }
+  .check-row:first-of-type { border-top: none; }
+  .check-row input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--teal); cursor: pointer; flex-shrink: 0; }
+  .check-row .cr-label { font-weight: 500; font-size: 0.96rem; }
+  .check-row .cr-desc { font-size: 0.84rem; color: var(--mist); }
+  .check-row .cr-price { margin-left: auto; font-size: 0.88rem; color: var(--teal); font-weight: 600; white-space: nowrap; }
+
+  /* Quote result panel */
+  .quote-result { background: linear-gradient(165deg, var(--teal) 0%, var(--teal-deep) 100%); color: #fff; padding: 48px 44px; display: flex; flex-direction: column; }
+  .quote-result .qr-eyebrow { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sky); margin-bottom: 18px; }
+  .qr-amount { font-family: 'Fraunces', serif; font-weight: 600; font-size: 3.6rem; line-height: 1; letter-spacing: -0.02em; }
+  .qr-amount .range-to { font-size: 1.4rem; opacity: 0.7; margin: 0 6px; }
+  .qr-basis { font-size: 0.92rem; color: var(--sky); margin-top: 10px; margin-bottom: 26px; }
+  .qr-lines { border-top: 1px solid rgba(255,255,255,0.18); padding-top: 18px; margin-bottom: auto; }
+  .qr-line { display: flex; justify-content: space-between; font-size: 0.92rem; padding: 6px 0; color: rgba(255,255,255,0.9); }
+  .qr-line span:last-child { font-weight: 600; color: #fff; }
+  .qr-note { font-size: 0.82rem; color: var(--sky); line-height: 1.5; margin-top: 18px; padding: 14px 16px; background: rgba(255,255,255,0.08); border-radius: 10px; }
+  .qr-cta { margin-top: 22px; background: var(--sun); color: var(--ink); text-align: center; padding: 15px; border-radius: 11px; font-weight: 600; font-size: 1.02rem; text-decoration: none; border: none; cursor: pointer; transition: background 0.2s; }
+  .qr-cta:hover { background: var(--sun-deep); }
+  .qr-empty { margin: auto 0; text-align: center; color: var(--sky); }
+  .qr-empty svg { opacity: 0.5; margin-bottom: 14px; }
+
+  /* ---------- Why / trust band ---------- */
+  .why { padding: 90px 0; background: var(--ink); color: #fff; }
+  .why .section-title { color: #fff; }
+  .why-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; margin-top: 20px; }
+  .why-item { text-align: center; }
+  .why-num { font-family: 'Fraunces', serif; font-size: 2.6rem; font-weight: 600; color: var(--sun); line-height: 1; margin-bottom: 10px; }
+  .why-item p { color: rgba(255,255,255,0.7); font-size: 0.96rem; }
+  .why-item strong { display: block; color: #fff; font-size: 1.04rem; margin-bottom: 4px; font-weight: 600; }
+
+  /* ---------- Process ---------- */
+  .process { padding: 96px 0; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; counter-reset: step; }
+  .step { position: relative; padding-top: 22px; }
+  .step::before { counter-increment: step; content: '0' counter(step); font-family: 'Fraunces', serif; font-size: 2.2rem; font-weight: 600; color: var(--sky); position: absolute; top: -14px; left: 0; }
+  .step h4 { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 600; margin: 18px 0 8px; }
+  .step p { color: var(--mist); font-size: 0.98rem; }
+  .step-rule { height: 2px; background: var(--line); position: relative; margin-top: 8px; }
+  .step-rule::after { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 36px; background: var(--sun); }
+
+  /* ---------- Commercial ---------- */
+  .commercial { padding: 90px 0; background: var(--sky-pale); border-top: 1px solid var(--line); }
+  .comm-shell { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+  .comm-copy h2 { font-family: 'Fraunces', serif; font-weight: 600; font-size: clamp(1.9rem, 3.2vw, 2.6rem); line-height: 1.1; margin-bottom: 18px; letter-spacing: -0.02em; }
+  .comm-copy p { color: var(--mist); font-size: 1.06rem; margin-bottom: 22px; }
+  .comm-points { list-style: none; margin-bottom: 0; }
+  .comm-points li { padding: 9px 0 9px 30px; position: relative; font-weight: 500; }
+  .comm-points li::before { content: ''; position: absolute; left: 0; top: 15px; width: 15px; height: 9px; border-left: 2px solid var(--teal); border-bottom: 2px solid var(--teal); transform: rotate(-45deg); }
+  .comm-form { background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 38px 34px; box-shadow: var(--shadow); }
+  .comm-form h3 { font-family: 'Fraunces', serif; font-size: 1.4rem; font-weight: 600; margin-bottom: 6px; }
+  .comm-form > p { font-size: 0.92rem; color: var(--mist); margin-bottom: 24px; }
+  .inp { width: 100%; padding: 13px 15px; border: 1.5px solid var(--line); border-radius: 10px; font-family: inherit; font-size: 0.96rem; color: var(--ink); margin-bottom: 14px; background: var(--white); transition: border-color 0.15s; }
+  .inp:focus { outline: none; border-color: var(--teal); }
+  textarea.inp { resize: vertical; min-height: 92px; }
+  .comm-form button { width: 100%; background: var(--teal); color: #fff; border: none; padding: 15px; border-radius: 11px; font-family: inherit; font-weight: 600; font-size: 1rem; cursor: pointer; transition: background 0.2s; }
+  .comm-form button:hover { background: var(--teal-deep); }
+  .form-status { font-size: 0.88rem; margin-top: 12px; text-align: center; display: none; }
+
+  /* ---------- Reviews ---------- */
+  .reviews { padding: 96px 0; }
+  .rev-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 44px; flex-wrap: wrap; gap: 20px; }
+  .rev-head .section-title { margin-bottom: 6px; }
+  .google-pill { display: inline-flex; align-items: center; gap: 10px; background: var(--white); border: 1px solid var(--line); border-radius: 999px; padding: 10px 18px; box-shadow: var(--shadow); }
+  .google-pill .g { font-weight: 700; font-size: 1.05rem; }
+  .google-pill .g span:nth-child(1){color:#4285F4}.google-pill .g span:nth-child(2){color:#EA4335}.google-pill .g span:nth-child(3){color:#FBBC05}.google-pill .g span:nth-child(4){color:#4285F4}.google-pill .g span:nth-child(5){color:#34A853}.google-pill .g span:nth-child(6){color:#EA4335}
+  .google-pill .gstars { color: var(--sun); letter-spacing: 1px; }
+  .google-pill .grate { font-weight: 700; }
+  .rev-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .rev-card { border: 1px solid var(--line); border-radius: 16px; padding: 28px; background: var(--white); }
+  .rev-stars { color: var(--sun); letter-spacing: 1.5px; margin-bottom: 14px; }
+  .rev-text { font-size: 0.98rem; color: var(--ink); margin-bottom: 20px; }
+  .rev-author { display: flex; align-items: center; gap: 12px; }
+  .rev-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--sky); color: var(--teal); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; }
+  .rev-name { font-weight: 600; font-size: 0.94rem; }
+  .rev-meta { font-size: 0.82rem; color: var(--mist); }
+  .rev-placeholder { grid-column: 1/-1; text-align: center; padding: 50px; border: 2px dashed var(--line); border-radius: 16px; color: var(--mist); }
+
+  /* ---------- Final CTA ---------- */
+  .final { padding: 90px 0; }
+  .final-card { background: linear-gradient(150deg, var(--teal), var(--teal-deep)); border-radius: 24px; padding: 70px 50px; text-align: center; color: #fff; position: relative; overflow: hidden; }
+  .final-card h2 { font-family: 'Fraunces', serif; font-weight: 600; font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 14px; letter-spacing: -0.02em; }
+  .final-card p { color: var(--sky); font-size: 1.12rem; margin-bottom: 32px; max-width: 34rem; margin-left: auto; margin-right: auto; }
+  .final-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .final .btn-primary { box-shadow: 0 6px 18px rgba(244,169,59,0.4); }
+  .final-phone { color: #fff; border: 1.5px solid rgba(255,255,255,0.4); padding: 15px 30px; border-radius: 999px; text-decoration: none; font-weight: 500; transition: background 0.2s; }
+  .final-phone:hover { background: rgba(255,255,255,0.1); }
+
+  /* ---------- Footer ---------- */
+  footer { background: var(--ink); color: rgba(255,255,255,0.7); padding: 56px 0 30px; }
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; padding-bottom: 36px; border-bottom: 1px solid rgba(255,255,255,0.12); }
+  .foot-brand { display: flex; align-items: center; gap: 11px; font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.2rem; color: #fff; margin-bottom: 14px; }
+  .foot-col h5 { color: #fff; font-size: 0.92rem; font-weight: 600; margin-bottom: 14px; letter-spacing: 0.04em; }
+  .foot-col a { display: block; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.94rem; padding: 5px 0; transition: color 0.15s; }
+  .foot-col a:hover { color: var(--sun); }
+  .foot-bottom { padding-top: 24px; display: flex; justify-content: space-between; font-size: 0.85rem; flex-wrap: wrap; gap: 10px; }
+
+  /* ---------- Toast ---------- */
+  .toast { position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(90px); background: var(--ink); color: #fff; padding: 14px 26px; border-radius: 999px; font-size: 0.94rem; z-index: 200; transition: transform 0.35s cubic-bezier(.34,1.56,.64,1); box-shadow: var(--shadow-lg); }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: 44px; padding: 60px 28px 80px; }
+    .hero-visual { max-width: 380px; }
+    .svc-grid, .why-grid, .steps, .rev-grid { grid-template-columns: 1fr; }
+    .quote-shell, .comm-shell { grid-template-columns: 1fr; }
+    .wrap, nav { padding-left: 24px; padding-right: 24px; }
+    nav { padding: 14px 24px; }
+    .nav-links { display: none; }
+    .why-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    .why-grid { grid-template-columns: 1fr; }
+    .quote-form, .quote-result, .comm-form { padding: 32px 24px; }
+    .final-card { padding: 50px 26px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#top" class="brand">
+    <svg class="brand-mark" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="2" width="30" height="30" rx="6" fill="#0B5563"/>
+      <rect x="8" y="8" width="18" height="18" rx="2" fill="#BFE3E8"/>
+      <path d="M17 8v18M8 17h18" stroke="#FBFDFD" stroke-width="2"/>
+      <path d="M10 11c2 1.5 4 1.5 6 0" stroke="#F4A93B" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+    Squeeky Clean Windows
+  </a>
+  <div class="nav-links">
+    <a href="#services">Services</a>
+    <a href="#quote">Instant Quote</a>
+    <a href="#commercial">Commercial</a>
+    <a href="#reviews">Reviews</a>
+    <a href="tel:+18015550100" class="nav-phone">(801) 555-0100</a>
+  </div>
+  <a href="#quote" class="nav-cta">Get a Quote</a>
+</nav>
+
+<span id="top"></span>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-copy">
+    <span class="hero-eyebrow">Window &amp; Gutter Cleaning</span>
+    <h1>Glass so clear<br>you'll forget <span class="light">it's there.</span></h1>
+    <p class="lede">Professional, fully-insured window and gutter cleaning for homes and businesses. Tell us how many windows you've got and get a real quote in under a minute — no waiting, no sales call.</p>
+    <div class="hero-actions">
+      <a href="#quote" class="btn-primary">Get your instant quote</a>
+      <a href="tel:+18015550100" class="btn-ghost">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Or call us
+      </a>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Licensed &amp; insured</div>
+      <div class="trust-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Satisfaction guaranteed</div>
+      <div class="trust-chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Same-week booking</div>
+    </div>
+  </div>
+
+  <div class="hero-visual" aria-hidden="true">
+    <div class="pane">
+      <div class="pane-grid">
+        <span class="pane-mullion-v"></span>
+        <span class="pane-mullion-h"></span>
+      </div>
+      <div class="droplets" id="droplets"></div>
+      <div class="swipe"></div>
+    </div>
+    <div class="frame"></div>
+    <div class="hero-badge">
+      <div>
+        <div class="stars">★★★★★</div>
+        <div class="label"><span class="num">Loved by</span> homeowners across Northern Utah</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">What we do</div>
+      <h2 class="section-title">Two jobs. Done properly.</h2>
+      <p class="section-sub">We kept our list short on purpose — we'd rather be excellent at the work that protects and brightens your home than mediocre at everything.</p>
+    </div>
+    <div class="svc-grid">
+      <div class="svc-card">
+        <div class="svc-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18M3 12h18"/></svg></div>
+        <h3>Window Cleaning</h3>
+        <p>Streak-free glass inside and out, with the details most crews skip.</p>
+        <ul class="svc-list">
+          <li>Interior &amp; exterior glass</li>
+          <li>Screens washed &amp; wiped</li>
+          <li>Sills and tracks detailed</li>
+          <li>Hard-water stain treatment</li>
+        </ul>
+      </div>
+      <div class="svc-card">
+        <div class="svc-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h18l-1.5 5H4.5L3 7z"/><path d="M5 12v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div>
+        <h3>Gutter Cleaning</h3>
+        <p>Clear, free-flowing gutters that protect your roof, walls, and foundation.</p>
+        <ul class="svc-list">
+          <li>Full debris removal by hand</li>
+          <li>Downspout flush &amp; flow check</li>
+          <li>Bagged &amp; hauled away</li>
+          <li>Roofline &amp; leak spot-check</li>
+        </ul>
+      </div>
+      <div class="svc-card">
+        <div class="svc-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v6M12 2L9 5M12 2l3 3"/><path d="M5 12c0 4 3 8 7 8s7-4 7-8a7 7 0 0 0-14 0z"/></svg></div>
+        <h3>Bundle &amp; Save</h3>
+        <p>Book windows and gutters together and we'll take care of both in one visit.</p>
+        <ul class="svc-list">
+          <li>10% off combined service</li>
+          <li>One trip, one appointment</li>
+          <li>Recurring plans available</li>
+          <li>Priority scheduling</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE TOOL -->
+<section class="quote" id="quote">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">Instant quote</div>
+      <h2 class="section-title">Your estimate, right now.</h2>
+      <p class="section-sub">Move the sliders to match your home. The price updates as you go — and there's no obligation to book.</p>
+    </div>
+
+    <div class="quote-shell">
+      <div class="quote-form">
+        <h3>Build your quote</h3>
+        <p class="hint">Most homes land somewhere between 15 and 30 windows.</p>
+
+        <div class="field">
+          <label>Property type</label>
+          <div class="seg" id="seg-prop">
+            <button class="on" data-prop="residential">Home</button>
+            <button data-prop="commercial">Business</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>How many windows?</label>
+          <div class="sublabel">Count each pane of glass you'd like cleaned.</div>
+          <div class="stepper">
+            <button type="button" id="win-minus" aria-label="Fewer windows">−</button>
+            <input type="number" id="win-count" value="18" min="0" max="300" aria-label="Number of windows">
+            <button type="button" id="win-plus" aria-label="More windows">+</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Service</label>
+          <div class="seg" id="seg-service">
+            <button class="on" data-svc="both">Inside &amp; Out</button>
+            <button data-svc="exterior">Exterior only</button>
+            <button data-svc="interior">Interior only</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Stories</label>
+          <div class="seg" id="seg-stories">
+            <button class="on" data-story="1">Single</button>
+            <button data-story="2">Two</button>
+            <button data-story="3">Three+</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Add-ons</label>
+          <label class="check-row">
+            <input type="checkbox" id="ad-screens">
+            <span><span class="cr-label">Screen cleaning</span><br><span class="cr-desc">Removed, washed, and re-set</span></span>
+            <span class="cr-price">+$2 / window</span>
+          </label>
+          <label class="check-row">
+            <input type="checkbox" id="ad-tracks">
+            <span><span class="cr-label">Tracks &amp; sills</span><br><span class="cr-desc">Vacuumed and wiped clean</span></span>
+            <span class="cr-price">+$3 / window</span>
+          </label>
+          <label class="check-row">
+            <input type="checkbox" id="ad-gutters">
+            <span><span class="cr-label">Add gutter cleaning</span><br><span class="cr-desc">Full clear-out &amp; downspout flush</span></span>
+            <span class="cr-price">from $120</span>
+          </label>
+          <label class="check-row">
+            <input type="checkbox" id="ad-hardwater">
+            <span><span class="cr-label">Hard-water treatment</span><br><span class="cr-desc">For spotted or stained glass</span></span>
+            <span class="cr-price">+ est.</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="quote-result" id="quote-result">
+        <div class="qr-eyebrow">Your estimate</div>
+        <div class="qr-amount"><span id="qr-low">$0</span><span class="range-to">–</span><span id="qr-high">$0</span></div>
+        <div class="qr-basis" id="qr-basis">Exterior &amp; interior · single story</div>
+        <div class="qr-lines" id="qr-lines"></div>
+        <div class="qr-note">This is an instant estimate based on what you entered. We'll confirm a firm price when we see the property — never any surprise charges.</div>
+        <button class="qr-cta" id="qr-book">Book this quote →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="why">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow" style="color:var(--sky)">Why neighbors call us back</div>
+      <h2 class="section-title">The difference is in the details.</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-item"><div class="why-num">100%</div><strong>Insured work</strong><p>Fully licensed and insured, so your property is always protected.</p></div>
+      <div class="why-item"><div class="why-num">48hr</div><strong>Fast quotes</strong><p>Instant online pricing and quick scheduling — usually same week.</p></div>
+      <div class="why-item"><div class="why-num">0</div><strong>Surprise fees</strong><p>The price we quote is the price you pay. No upsells on the doorstep.</p></div>
+      <div class="why-item"><div class="why-num">✓</div><strong>Guaranteed</strong><p>Not happy with a window? We come back and make it right.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">How it works</div>
+      <h2 class="section-title">From quote to clean in three steps.</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-rule"></div>
+        <h4>Get your quote</h4>
+        <p>Use the instant quote tool or call us. You'll know your price before we ever knock on the door.</p>
+      </div>
+      <div class="step">
+        <div class="step-rule"></div>
+        <h4>Pick a time</h4>
+        <p>We'll confirm a slot that works for you — most jobs are booked within the same week.</p>
+      </div>
+      <div class="step">
+        <div class="step-rule"></div>
+        <h4>Enjoy the view</h4>
+        <p>We show up on time, do the detail work, and leave your glass and gutters spotless.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMERCIAL -->
+<section class="commercial" id="commercial">
+  <div class="wrap">
+    <div class="comm-shell">
+      <div class="comm-copy">
+        <div class="section-eyebrow">For businesses</div>
+        <h2>Storefronts, offices, and properties — on a schedule that fits.</h2>
+        <p>First impressions start at the glass. We work with property managers, retail, restaurants, and offices on one-time cleans or recurring contracts billed monthly.</p>
+        <ul class="comm-points">
+          <li>Weekly, monthly, or quarterly schedules</li>
+          <li>Storefront, high-rise, and multi-unit experience</li>
+          <li>Consolidated invoicing &amp; net terms available</li>
+          <li>After-hours service to avoid disrupting customers</li>
+        </ul>
+      </div>
+      <div class="comm-form">
+        <h3>Request a commercial quote</h3>
+        <p>Tell us about your property and we'll get back within one business day.</p>
+        <form id="commercial-form">
+          <input class="inp" type="text" name="business" placeholder="Business name" required>
+          <input class="inp" type="text" name="name" placeholder="Your name" required>
+          <input class="inp" type="email" name="email" placeholder="Email address" required>
+          <input class="inp" type="tel" name="phone" placeholder="Phone number">
+          <textarea class="inp" name="details" placeholder="Property type, number of windows/floors, and how often you'd like service"></textarea>
+          <button type="submit">Request quote</button>
+          <div class="form-status" id="comm-status"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews" id="reviews">
+  <div class="wrap">
+    <div class="rev-head">
+      <div>
+        <div class="section-eyebrow">Reviews</div>
+        <h2 class="section-title">What our customers say.</h2>
+      </div>
+      <a class="google-pill" id="google-link" href="#" target="_blank" rel="noopener">
+        <span class="g"><span>G</span><span>o</span><span>o</span><span>g</span><span>l</span><span>e</span></span>
+        <span class="gstars">★★★★★</span>
+        <span class="grate" id="google-rating">—</span>
+      </a>
+    </div>
+    <div class="rev-grid" id="rev-grid">
+      <!-- Reviews are injected from reviews.js — see note below. Until you add real Google reviews, this placeholder shows. -->
+      <div class="rev-placeholder" id="rev-placeholder">
+        <p style="font-weight:600;color:var(--ink);margin-bottom:8px;">Your real Google reviews will show here.</p>
+        <p>Once you've collected reviews on your Google Business Profile, drop them into <code>reviews.js</code> and they'll appear automatically — no made-up testimonials.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final">
+  <div class="wrap">
+    <div class="final-card">
+      <h2>Ready for a clearer view?</h2>
+      <p>Get your instant quote now, or give us a call. We'll have your windows gleaming before you know it.</p>
+      <div class="final-actions">
+        <a href="#quote" class="btn-primary">Get your instant quote</a>
+        <a href="tel:+18015550100" class="final-phone">Call (801) 555-0100</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand">
+          <svg width="28" height="28" viewBox="0 0 34 34" fill="none"><rect x="2" y="2" width="30" height="30" rx="6" fill="#0B5563"/><rect x="8" y="8" width="18" height="18" rx="2" fill="#BFE3E8"/><path d="M17 8v18M8 17h18" stroke="#FBFDFD" stroke-width="2"/></svg>
+          Squeeky Clean Windows
+        </div>
+        <p style="max-width:22rem;font-size:0.94rem;">Professional window and gutter cleaning for homes and businesses across Northern Utah. Licensed, insured, and a little obsessed with streak-free glass.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Services</h5>
+        <a href="#services">Window cleaning</a>
+        <a href="#services">Gutter cleaning</a>
+        <a href="#commercial">Commercial</a>
+        <a href="#quote">Instant quote</a>
+      </div>
+      <div class="foot-col">
+        <h5>Get in touch</h5>
+        <a href="tel:+18015550100">(801) 555-0100</a>
+        <a href="mailto:hello@squeekycleanwindows.com">hello@squeekycleanwindows.com</a>
+        <a href="#reviews">Reviews</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Squeeky Clean Windows. All rights reserved.</span>
+      <span>Licensed &amp; fully insured</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="reviews.js"></script>
+<script>
+/* ---------- Hero droplets ---------- */
+(function(){
+  const wrap = document.getElementById('droplets');
+  if (!wrap) return;
+  for (let i=0;i<14;i++){
+    const d = document.createElement('i');
+    const s = 4 + Math.random()*7;
+    d.style.width = d.style.height = s+'px';
+    d.style.left = Math.random()*100+'%';
+    d.style.top = Math.random()*100+'%';
+    d.style.opacity = 0.3 + Math.random()*0.5;
+    wrap.appendChild(d);
+  }
+})();
+
+/* ---------- Quote calculator ---------- */
+const PRICING = {
+  perWindow: { exterior: 5, interior: 5, both: 9 }, // base $/window
+  minimum: 95,                 // job minimum
+  storyMult: { 1: 1.0, 2: 1.18, 3: 1.4 },
+  addons: { screens: 2, tracks: 3 },   // per window
+  gutterBase: 120,
+  hardwaterPct: 0.15,          // +15% rough allowance
+  rangeSpread: 0.12            // +/- shown as a range
+};
+
+const state = { prop:'residential', windows:18, service:'both', stories:1,
+  screens:false, tracks:false, gutters:false, hardwater:false };
+
+function money(n){ return '$' + Math.round(n).toLocaleString(); }
+
+function calc(){
+  const w = state.windows;
+  let base = w * PRICING.perWindow[state.service];
+  base *= PRICING.storyMult[state.stories];
+
+  const lines = [];
+  lines.push(['Window cleaning (' + w + ' windows)', base]);
+
+  if (state.screens){ const c = w*PRICING.addons.screens; base+=c; lines.push(['Screen cleaning', c]); }
+  if (state.tracks){ const c = w*PRICING.addons.tracks; base+=c; lines.push(['Tracks & sills', c]); }
+  if (state.gutters){ base+=PRICING.gutterBase; lines.push(['Gutter cleaning', PRICING.gutterBase]); }
+  if (state.hardwater){ const c = base*PRICING.hardwaterPct; base+=c; lines.push(['Hard-water treatment', c]); }
+
+  let total = Math.max(base, PRICING.minimum);
+  const hitMin = base < PRICING.minimum;
+
+  return { total, lines, hitMin };
+}
+
+function render(){
+  const { total, lines, hitMin } = calc();
+  const low = total * (1 - PRICING.rangeSpread);
+  const high = total * (1 + PRICING.rangeSpread);
+
+  document.getElementById('qr-low').textContent = money(low);
+  document.getElementById('qr-high').textContent = money(high);
+
+  const svcLabel = { both:'Exterior & interior', exterior:'Exterior only', interior:'Interior only' }[state.service];
+  const storyLabel = { 1:'single story', 2:'two stories', 3:'three+ stories' }[state.stories];
+  document.getElementById('qr-basis').textContent = svcLabel + ' · ' + storyLabel;
+
+  const linesEl = document.getElementById('qr-lines');
+  linesEl.innerHTML = lines.map(l =>
+    '<div class="qr-line"><span>'+l[0]+'</span><span>'+money(l[1])+'</span></div>'
+  ).join('') + (hitMin ? '<div class="qr-line"><span>Job minimum applied</span><span>'+money(PRICING.minimum)+'</span></div>' : '');
+}
+
+/* segmented controls */
+function wireSeg(id, key, cast){
+  document.querySelectorAll('#'+id+' button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('#'+id+' button').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      const v = btn.dataset[key];
+      state[key === 'prop' ? 'prop' : key === 'svc' ? 'service' : key === 'story' ? 'stories' : key] = cast ? cast(v) : v;
+      render();
+    });
+  });
+}
+wireSeg('seg-prop','prop');
+wireSeg('seg-service','svc');
+wireSeg('seg-stories','story', v=>parseInt(v));
+
+/* stepper */
+const winInput = document.getElementById('win-count');
+function setWindows(n){ n=Math.max(0,Math.min(300,n||0)); state.windows=n; winInput.value=n; render(); }
+document.getElementById('win-plus').addEventListener('click',()=>setWindows(state.windows+1));
+document.getElementById('win-minus').addEventListener('click',()=>setWindows(state.windows-1));
+winInput.addEventListener('input',()=>setWindows(parseInt(winInput.value)));
+
+/* addons */
+['screens','tracks','gutters','hardwater'].forEach(k=>{
+  document.getElementById('ad-'+k).addEventListener('change',e=>{ state[k]=e.target.checked; render(); });
+});
+
+/* book button -> deep link to commercial/contact with quote prefilled */
+document.getElementById('qr-book').addEventListener('click',()=>{
+  const { total } = calc();
+  const summary = state.windows+' windows · '+state.service+' · '+state.stories+' story'+
+    (state.gutters?' · +gutters':'')+(state.screens?' · +screens':'')+(state.tracks?' · +tracks':'');
+  const details = document.querySelector('#commercial-form [name=details]');
+  if (details){ details.value = 'QUOTE REQUEST (~'+money(total)+'): '+summary; }
+  document.getElementById('commercial').scrollIntoView({behavior:'smooth'});
+  showToast('Quote added — just add your details to book');
+});
+
+render();
+
+/* ---------- Commercial / quote form ---------- */
+document.getElementById('commercial-form').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const status = document.getElementById('comm-status');
+  const btn = this.querySelector('button');
+  btn.disabled = true; btn.textContent = 'Sending…';
+
+  const payload = Object.fromEntries(new FormData(this).entries());
+
+  try {
+    const res = await fetch('/api/lead', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if(!res.ok) throw new Error();
+    status.style.display='block'; status.style.color='var(--teal)';
+    status.textContent = 'Thanks — we\'ll be in touch within one business day.';
+    this.reset();
+    showToast('Request sent ✓');
+  } catch(err) {
+    status.style.display='block'; status.style.color='#C0492F';
+    status.textContent = 'Something went wrong. Please call us at (801) 555-0100.';
+  } finally {
+    btn.disabled=false; btn.textContent='Request quote';
+  }
+});
+
+/* ---------- Reviews injection ---------- */
+(function(){
+  if (typeof GOOGLE_REVIEWS === 'undefined' || !Array.isArray(GOOGLE_REVIEWS) || GOOGLE_REVIEWS.length === 0) return;
+  const grid = document.getElementById('rev-grid');
+  const ph = document.getElementById('rev-placeholder');
+  if (ph) ph.remove();
+  if (typeof GOOGLE_RATING !== 'undefined') document.getElementById('google-rating').textContent = GOOGLE_RATING;
+  if (typeof GOOGLE_PROFILE_URL !== 'undefined') document.getElementById('google-link').href = GOOGLE_PROFILE_URL;
+
+  grid.innerHTML = GOOGLE_REVIEWS.map(r=>{
+    const stars = '★★★★★'.slice(0, r.rating) + '☆☆☆☆☆'.slice(0, 5-r.rating);
+    const initials = r.name.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
+    return `<div class="rev-card">
+      <div class="rev-stars">${stars}</div>
+      <div class="rev-text">${r.text}</div>
+      <div class="rev-author">
+        <div class="rev-avatar">${initials}</div>
+        <div><div class="rev-name">${r.name}</div><div class="rev-meta">${r.date || 'Google review'}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+})();
+
+/* ---------- Toast ---------- */
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
